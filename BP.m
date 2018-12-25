@@ -114,8 +114,9 @@ for i=1:M
 		hl(i)=1/4*tau^2;
 	else if mod(g(i),2)==0
 		hl(i)=0;
-	else
+		else
 		hl(i)=-1/(pi^2*tau^2*(g(i)^2));
+		end
 	end
 end
 
