@@ -31,10 +31,14 @@ for col=1:128
 		pro_fft(:,i)=fft(pro(:,i),width);
 	end
 	
-	%滤波,选用斜坡滤波
+	%斜坡滤波
 	filter=2*[0:width/2-1,width/2:-1:1]'/width;	%|w|
+	
+	%选用hamming窗
+	filter_Hamming=0.54-0.46*cos([0:width-1]'.*(2*pi/(width-1)));
+	
 	for i=1:60
-		pro_filter(:,i)=pro_fft(:,i).*filter;
+		pro_filter(:,i)=(pro_fft(:,i).*filter).*filter_Hamming;
 	end
 	
 	%逆傅里叶变换得到滤波后的投影值
@@ -53,7 +57,7 @@ for col=1:128
 				
 				if top<=128&&flo>0&&s~=fix(s)
 					p=pro_ifft(flo,i,col)+(s-flo)*(pro_ifft(top,i,col)-pro_ifft(flo,i,col));%线性插值
-                elseif s==fix(s)&&s>0&&s<=128
+                		elseif s==fix(s)&&s>0&&s<=128
 					p=pro_ifft(s,i,col);
 				end
 				
@@ -68,7 +72,7 @@ end
 
 
 %写入raw文件
-result='FBP-zh.raw';
+result='FBP-hamming.raw';
 fid=fopen(result,'w+');
 cnt=fwrite(fid,fbp,'float32');
 fclose(fid);
